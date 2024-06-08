@@ -178,11 +178,11 @@ resource "null_resource" "provision_instance" {
 
   provisioner "file" {
     source      = "../aws/ec2/docker-compose.yml"
-    destination = "/home/ec2-user/docker-compose.yml"
+    destination = "/home/ubuntu/docker-compose.yml"
 
     connection {
       type        = "ssh"
-      user        = "ec2-user"
+      user        = "ubuntu"
       private_key = file("~/.ssh/n8nsetup.pem")
       host        = aws_instance.n8n_ec2.public_ip
       timeout     = "5m"
@@ -191,11 +191,11 @@ resource "null_resource" "provision_instance" {
 
   provisioner "file" {
     source      = "../aws/ec2/.env"
-    destination = "/home/ec2-user/.env"
+    destination = "/home/ubuntu/.env"
 
     connection {
       type        = "ssh"
-      user        = "ec2-user"
+      user        = "ubuntu"
       private_key = file("~/.ssh/n8nsetup.pem")
       host        = aws_instance.n8n_ec2.public_ip
       timeout     = "5m"
@@ -207,15 +207,16 @@ resource "null_resource" "provision_instance" {
       "sudo yum update -y",
       "sudo amazon-linux-extras install docker -y",
       "sudo service docker start",
-      "sudo usermod -a -G docker ec2-user",
+      "sudo usermod -a -G docker ubuntu",
+      "sudo amazon-linux-extras install docker-compose -y",
       "sudo curl -L \"https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)\" -o /usr/local/bin/docker-compose",
       "sudo chmod +x /usr/local/bin/docker-compose",
-      "docker-compose -f /home/ec2-user/docker-compose.yml up -d"
+      "docker-compose -f /home/ubuntu/docker-compose.yml up -d"
     ]
 
     connection {
       type        = "ssh"
-      user        = "ec2-user"
+      user        = "ubuntu"
       private_key = file("~/.ssh/n8nsetup.pem")
       host        = aws_instance.n8n_ec2.public_ip
       timeout     = "5m"
