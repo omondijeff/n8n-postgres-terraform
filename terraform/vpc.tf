@@ -90,4 +90,11 @@ resource "aws_route_table_association" "private_subnet" {
   route_table_id = aws_route_table.private.id
 }
 
+# Ensure that the default VPC route table has a route to the Internet Gateway
+resource "aws_route" "default_route_to_igw" {
+  route_table_id         = aws_vpc.main.default_route_table_id
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_internet_gateway.igw.id
+}
+
 data "aws_availability_zones" "available" {}

@@ -204,13 +204,14 @@ resource "null_resource" "provision_instance" {
 
   provisioner "remote-exec" {
     inline = [
-      "sudo yum update -y",
-      "sudo amazon-linux-extras install docker -y",
-      "sudo service docker start",
-      "sudo usermod -a -G docker ubuntu",
-      "sudo amazon-linux-extras install docker-compose -y",
+      "sudo apt-get update -y", # Use apt-get instead of yum for Ubuntu
+      "sudo apt-get install docker.io -y",
+      "sudo systemctl start docker",
+      "sudo usermod -aG docker ubuntu",
       "sudo curl -L \"https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)\" -o /usr/local/bin/docker-compose",
       "sudo chmod +x /usr/local/bin/docker-compose",
+      "sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose",
+      "docker-compose --version", # Verify installation
       "docker-compose -f /home/ubuntu/docker-compose.yml up -d"
     ]
 
